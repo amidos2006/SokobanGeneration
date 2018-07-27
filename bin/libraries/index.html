@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Minature Sokoban - Level Design Workshop</title>
+    <style>
+        .center{
+            display: block;
+            margin: auto;
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid rgb(73, 107, 54);
+            image-rendering: optimizeSpeed;
+            /* Older versions of FF          */
+            image-rendering: -moz-crisp-edges;
+            /* FF 6.0+                       */
+            image-rendering: -webkit-optimize-contrast;
+            /* Safari                        */
+            image-rendering: -o-crisp-edges;
+            /* OS X & Windows Opera (12.02+) */
+            image-rendering: pixelated;
+            /* Awesome future-browsers       */
+            -ms-interpolation-mode: nearest-neighbor;
+            /* IE                            */
+        }
+    </style>
+</head>
+
+<body onload="startGame()">
+    <h2 class="center">
+        Minature Sokoban
+    </h2>
+    <p></p>
+    <canvas id="game" class="center"></canvas>
+    <p></p>
+    <p class="center">
+        Controls: Arrows to Move - Z to Undo
+    </p>
+    <input style="position: absolute; left:-1000px; top:-1000px;" id="copyURL" type="text" readonly/>
+    <script src="sokoban.js"></script>
+    <script>
+        let GameMap = function () {
+            this.tiles = [];
+            for (let y = 0; y < 10; y++) {
+                this.tiles.push([]);
+                for (let x = 0; x < 10; x++) {
+                    this.tiles[y].push(new Entity(x * 16, y * 16, Engine.img, 6));
+                }
+            }
+        }
+
+        GameMap.prototype.initialize = function (level) {
+            if(level == null){
+                return;
+            }
+            for (let i = 0; i < level.length; i++) {
+                let x = Math.floor(i / 10);
+                let y = i % 10;
+                switch (level.charAt(i)) {
+                    case "B":
+                        this.tiles[y][x].index = 3;
+                        break;
+                    case "C":
+                        this.tiles[y][x].index = 4;
+                        break;
+                    case "D":
+                        this.tiles[y][x].index = 0;
+                        break;
+                    case "E":
+                        this.tiles[y][x].index = 1;
+                        break;
+                    case "F":
+                        this.tiles[y][x].index = 2;
+                        break;
+                }
+            }
+            Engine.controls.mode = 1;
+            Engine.runningGame.initialize(Engine.map.tiles);
+        }
+
+        GameMap.prototype.update = function () {
+            let locX = Math.floor(Engine.mouseX / 16);
+            let locY = Math.floor(Engine.mouseY / 16);
+            if (!Engine.mouseDown || locX < 0 || locY < 0 || locX > 9 || locY > 9) {
+                return;
+            }
+            let imgIndex = Engine.controls.getSelected().entity.index;
+            this.tiles[locY][locX].index = imgIndex;
+        }
+
+        GameMap.prototype.getLevelString = function () {
+            let result = "";
+            for (let x = 0; x < 10; x++) {
+                for (let y = 0; y < 10; y++) {
+                    switch (this.tiles[y][x].index) {
+                        case 6:
+                            result += "A";
+                            break;
+                        case 3:
+                            result += "B";
+                            break;
+                        case 4:
+                            result += "C";
+                            break;
+                        case 0:
+                            result += "D";
+                            break;
+                        case 1:
+                            result += "E";
+                            break;
+                        case 2:
+                            result += "F";
+                            break;
+                    }
+                }
+            }
+            return result;
+        }
+
+        GameMap.prototype.render = function (context) {
+            for (let row of this.tiles) {
+                for (let tile of row) {
+                    if (tile.index != 6) {
+                        tile.render(context);
+                    }
+                }
+            }
+        }
+
+        let Controls = function (img) {
+            this.panel = [];
+            this.panel.push(new Button(0 * 16, 10 * 16, img, 6));
+            this.panel.push(new Button(1 * 16, 10 * 16, img, 3));
+            this.panel.push(new Button(2 * 16, 10 * 16, img, 4));
+            this.panel.push(new Button(3 * 16, 10 * 16, img, 0));
+            this.panel.push(new Button(4 * 16, 10 * 16, img, 1));
+            this.panel.push(new Button(5 * 16, 10 * 16, img, 2));
+            this.panel[0].selected = true;
+
+            this.mode = 0;
+            this.playEdit = [new Button(8 * 16 - 5, 10 * 16, img, 9),
+            new Button(8 * 16 - 5, 10 * 16, img, 11)];
+            this.copyUrl = new Button(9 * 16, 10 * 16, img, 10);
+        }
+
+        Controls.prototype.getSelected = function () {
+            for (let i = 0; i < this.panel.length; i++) {
+                if (this.panel[i].selected) {
+                    return this.panel[i];
+                }
+            }
+            return null;
+        }
+
+        Controls.prototype.update = function () {
+            if (!Engine.mouseDown) {
+                return;
+            }
+            if (this.mode == 0) {
+                let currentSelected = this.getSelected();
+                for (let e of this.panel) {
+                    e.selected = false;
+                }
+                for (let e of this.panel) {
+                    if (e.click(Engine.mouseX, Engine.mouseY)) {
+                        e.selected = true;
+                        currentSelected = null;
+                        break;
+                    }
+                }
+                if (currentSelected != null) {
+                    currentSelected.selected = true;
+                }
+            }
+
+            if (!Engine.mouseClick) {
+                return;
+            }
+            if (this.playEdit[this.mode].click(Engine.mouseX, Engine.mouseY)) {
+                this.mode = 1 - this.mode;
+                if (this.mode == 0) {
+                    Engine.background.changeType(true);
+                }
+                else {
+                    Engine.runningGame.initialize(Engine.map.tiles);
+                }
+            }
+        }
+
+        Controls.prototype.render = function (context) {
+            if (this.mode == 0) {
+                for (let e of this.panel) {
+                    e.render(context);
+                }
+            }
+            this.playEdit[this.mode].render(context);
+            this.copyUrl.render(context);
+        }
+
+        let Button = function (x, y, img, index) {
+            this.entity = new Entity(x, y, img, index);
+            this.selection = new Entity(x, y, img, 5);
+            this.selected = false;
+        }
+
+        Button.prototype.click = function (px, py) {
+            let top = this.entity.y;
+            let bot = this.entity.y + 16;
+            let left = this.entity.x;
+            let right = this.entity.x + 16;
+            if (px < left || px > right || py < top || py > bot) {
+                return false;
+            }
+            return true;
+        }
+
+        Button.prototype.render = function (context) {
+            this.entity.render(context);
+            if (this.selected) {
+                this.selection.render(context);
+            }
+        }
+
+        let Background = function (img) {
+            this.entities = [];
+            for (let x = 0; x < 10; x++) {
+                for (let y = 0; y < 11; y++) {
+                    this.entities.push(new Entity(x * 16, y * 16, Engine.img, 6));
+                }
+            }
+            this.grid = [];
+            for (let x = 0; x < 10; x++) {
+                for (let y = 0; y < 10; y++) {
+                    this.grid.push(new Entity(x * 16, y * 16, Engine.img, 8));
+                }
+            }
+        }
+
+        Background.prototype.changeType = function (win) {
+            let index = 6;
+            if (!win) {
+                index = 7;
+            }
+            for (let e of this.entities) {
+                e.index = index;
+            }
+        }
+
+        Background.prototype.render = function (context) {
+            for (let e of this.entities) {
+                e.render(context);
+            }
+            for (let e of this.grid) {
+                e.render(context);
+            }
+        }
+
+        let Engine = {
+            initialize: function (width, height, scale) {
+                this.canvas = document.getElementById("game");
+                this.copyURL = document.getElementById("copyURL");
+                this.canvas.width = width;
+                this.canvas.height = height;
+                this.canvas.style = "width:" + width * scale + "px;height:" + height * scale + "px;";
+                this.context = this.canvas.getContext("2d");
+                this.mouseX = 0;
+                this.mouseY = 0;
+                this.mouseDown = false;
+                this.mouseClick = false;
+                this.keyPressed = {};
+                this.img = new Image();
+                this.img.src = "assets/sokoban.png";
+                this.background = null;
+                this.controls = null;
+                this.map = null;
+                this.runningGame = null;
+            },
+            width: function () {
+                return this.canvas.width;
+            },
+            height: function () {
+                return this.canvas.height;
+            },
+            smoothImageRendering: function (value) {
+                this.context.mozImageSmoothingEnabled = value;
+                this.context.webkitImageSmoothingEnabled = value;
+                this.context.msImageSmoothingEnabled = value;
+                this.context.imageSmoothingEnabled = value;
+            },
+            update: function () {
+                this.controls.update();
+                if (this.controls.mode == 0) {
+                    this.map.update();
+                }
+                else {
+                    let xDir = 0;
+                    let yDir = 0;
+                    let undo = false;
+                    if (Engine.keyPressed[37]) {
+                        xDir -= 1;
+                        Engine.keyPressed[37] = false;
+                    }
+                    else if (Engine.keyPressed[38]) {
+                        yDir -= 1;
+                        Engine.keyPressed[38] = false;
+                    }
+                    else if (Engine.keyPressed[39]) {
+                        xDir += 1;
+                        Engine.keyPressed[39] = false;
+                    }
+                    else if (Engine.keyPressed[40]) {
+                        yDir += 1;
+                        Engine.keyPressed[40] = false;
+                    }
+                    else if (Engine.keyPressed[90]) {
+                        undo = true;
+                        Engine.keyPressed[90] = false;
+                    }
+                    this.runningGame.update(xDir, yDir, undo);
+                    Engine.background.changeType(this.runningGame.checkWin());
+                }
+                this.mouseClick = false;
+            },
+            render: function () {
+                this.context.clearRect(0, 0, this.width(), this.height());
+                this.background.render(this.context);
+                this.controls.render(this.context);
+                if (this.controls.mode == 0) {
+                    this.map.render(this.context);
+                }
+                else {
+                    this.runningGame.render(this.context);
+                }
+            }
+        }
+
+        function copyURL() {
+            Engine.copyURL.value = window.location.href.split("\?")[0] + "?level=" + Engine.map.getLevelString();
+            Engine.copyURL.select();
+            document.execCommand("Copy");
+            Engine.canvas.focus();
+        }
+
+        function startGame() {
+            Engine.initialize(160, 176, 2);
+            Engine.background = new Background(Engine.img);
+            Engine.controls = new Controls(Engine.img, copyURL);
+            Engine.map = new GameMap();
+            Engine.runningGame = new SokobanGame(Engine.img);
+            window.addEventListener("mousedown", function (e) {
+                Engine.mouseDown = true;
+                Engine.mouseClick = true;
+                if (Engine.controls.copyUrl.click(Engine.mouseX, Engine.mouseY)) {
+                    copyURL();
+                }
+            });
+            window.addEventListener("mousemove", function (e) {
+                Engine.mouseX = (e.pageX - Engine.canvas.getBoundingClientRect().x) / 2;
+                Engine.mouseY = (e.pageY - Engine.canvas.getBoundingClientRect().y) / 2;
+            });
+            window.addEventListener("mouseup", function (e) {
+                Engine.mouseDown = false;
+                Engine.mouseClick = false;
+            });
+            window.addEventListener("keydown", function (e) {
+                Engine.keyPressed[e.keyCode] = true;
+            });
+            window.addEventListener("keyup", function (e) {
+                Engine.keyPressed[e.keyCode] = false;
+            });
+            window.requestAnimationFrame(gameLoop);
+            if (window.location.search.length > 0) {
+                let level = window.location.search.split("=")[1];
+                Engine.map.initialize(level);
+            }
+        }
+
+        function gameLoop() {
+            Engine.update();
+            Engine.render();
+            window.requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+
+</html>
