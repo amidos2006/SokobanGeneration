@@ -1289,7 +1289,7 @@ var RunningEvaluator = (function () {
         for (var i = 0; i < this._size; i++) {
             var filePath = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
             if (fs.existsSync(filePath)) {
-                Global.sleep(100);
+                Global.sleep(1000);
                 var lines = fs.readFileSync(filePath, "utf8").split("\n");
                 var temp = new Chromosome(width, height, minLength, maxBoxes);
                 temp.stringInitialize(lines);

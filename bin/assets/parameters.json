@@ -5,6 +5,7 @@
     "inPath": "../input/",
     "resultPath": "../result/",
     "agent": "MCTS",
+    "deleteOldGen": true,
     "agentParameters": [0.2, 0, 10],
     "dimSize": [9, 10, 9, 6],
     "popSize": 20,

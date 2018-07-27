@@ -16,13 +16,18 @@ let agent = new SokobanGeneration[parameters.agent](agentArgs);
 console.log("Waiting for chromosomes");
 while(true){
     SokobanGeneration.Global.sleep(1000);
-    let chromosomes = evaluator.checkFiles(fs, parameters.inPath, parameters.width,
-        parameters.height, parameters.minLength, parameters.maxBoxes);
-    if(chromosomes.length > 0){
-        console.log("Found " + chromosomes.length + " chromosomes for evaluation");
-        console.log("Running " + parameters.agent + " to solve all the chromosomes");
-        evaluator.evaluateChromosomes(fs, parameters.outPath, chromosomes, SokobanGame,
-            agent, parameters.allowedNodes);
-        console.log("Waiting for chromosomes");
+    try{
+        let chromosomes = evaluator.checkFiles(fs, parameters.inPath, parameters.width,
+            parameters.height, parameters.minLength, parameters.maxBoxes);
+        if(chromosomes.length > 0){
+            console.log("Found " + chromosomes.length + " chromosomes for evaluation");
+            console.log("Running " + parameters.agent + " to solve all the chromosomes");
+            evaluator.evaluateChromosomes(fs, parameters.outPath, chromosomes, SokobanGame,
+                agent, parameters.allowedNodes);
+            console.log("Waiting for chromosomes");
+        }
+    }
+    catch(e){
+        console.log("Error happened, Trying to overcome it in the next loop.");
     }
 }
