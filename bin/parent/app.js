@@ -11,6 +11,10 @@ let maximumGeneration = 0;
 if(process.argv.length > 3){
     maximumGeneration = parseInt(process.argv[3]);
 }
+let genNumber = 0;
+if(process.argv.length > 4){
+    genNumber = parseInt(process.argv[4]);
+}
 let evaluator = new SokobanGeneration.ParentEvaluator();
 let mapElite = new SokobanGeneration.MapElite(parameters.popSize, parameters.dimSize);
 
@@ -87,12 +91,35 @@ function writeGeneration(genNumber){
     }
 }
 
+function loadMapElites(genNumber){
+//     let folderPath = parameters.resultPath + genNumber.toString() + "/"
+//     let names = fs.readdirSync(folderPath);
+//     for(let n of names){
+//         if(fs.lstatSync(n).isDirectory()){
+//             let c = new SokobanGeneration.Chromosome(parameters.width, parameters.height, 
+//                 parameters.minLength, parameters.maxBoxes);
+//             let dimString = n.split(",");
+//             let dims = [];
+//             for(let i=0; i<dimString.length; i++){
+//                 dims.push(parseFloat(dimString[i]) / parameters.dimSize[i]);
+//             }
+//         }
+//     }
+}
 
-let genNumber = 0;
-console.log("Initializing map");
-let chromosomes = mapElite.initializeMap(parameters.width, parameters.height, parameters.minLength, 
-    parameters.wallPercentage, parameters.boxPercentage, parameters.maxBoxes, batchSize);
-fs.writeFileSync(parameters.resultPath + "statistics.txt", "");
+if(genNumber == 0){
+    console.log("Initializing map");
+    let chromosomes = mapElite.initializeMap(parameters.width, parameters.height, parameters.minLength, 
+        parameters.wallPercentage, parameters.boxPercentage, parameters.maxBoxes, batchSize);
+    fs.writeFileSync(parameters.resultPath + "statistics.txt", "");
+}
+else{
+    console.log("Loading map from generation " + genNumber)
+    loadMapElites();
+    genNumber += 1;
+    console.log("   Get new batch for the next generation");
+    chromosomes = mapElite.nextGeneration(parameters.inbreeding, parameters.crossover, parameters.mutation, batchSize);
+}
 while(true){
     console.log("Generation " + genNumber);
     evaluator.prepareForEvaluation(fs, parameters.inPath, chromosomes);

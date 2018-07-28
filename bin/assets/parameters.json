@@ -7,7 +7,7 @@
     "agent": "MCTS",
     "deleteOldGen": true,
     "agentParameters": [0.2, 0, 10],
-    "dimSize": [9, 10, 9, 6],
+    "dimSize": [9, 6, 9],
     "popSize": 20,
     "width": 8,
     "height": 8,
