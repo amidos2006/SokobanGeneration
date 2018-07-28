@@ -16,7 +16,8 @@ class RunningEvaluator{
         }
 
         let startIndex:number = this._id * this._size;
-        while(result.length < this._size){
+        let numberOfFound = 0;
+        while(numberOfFound < this._size){
             for(let i=0; i<this._size; i++){
                 let filePath: string = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
                 if(fs.existsSync(filePath)){
@@ -28,6 +29,7 @@ class RunningEvaluator{
                         temp.stringInitialize(lines);
                         fs.unlinkSync(filePath);
                         result[i] = temp;
+                        numberOfFound += 1;
                     }
                 }
             }

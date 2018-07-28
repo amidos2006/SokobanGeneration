@@ -1289,7 +1289,8 @@ var RunningEvaluator = (function () {
             result.push(null);
         }
         var startIndex = this._id * this._size;
-        while (result.length < this._size) {
+        var numberOfFound = 0;
+        while (numberOfFound < this._size) {
             for (var i = 0; i < this._size; i++) {
                 var filePath = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
                 if (fs.existsSync(filePath)) {
@@ -1301,6 +1302,7 @@ var RunningEvaluator = (function () {
                         temp.stringInitialize(lines);
                         fs.unlinkSync(filePath);
                         result[i] = temp;
+                        numberOfFound += 1;
                     }
                 }
             }
