@@ -128,6 +128,8 @@ while(true){
     while(!evaluator.checkIsDone(fs, parameters.outPath)){
         SokobanGeneration.Global.sleep(1000);
     }
+    // for safety to make sure that all children finished writing
+    SokobanGeneration.Global.sleep(2000);
     console.log("   Set the chromosomes' solution");
     evaluator.setChromosomes(fs, parameters.outPath, chromosomes);
     console.log("   Updating map");

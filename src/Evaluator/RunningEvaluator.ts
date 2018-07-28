@@ -15,12 +15,15 @@ class RunningEvaluator{
         for(let i=0; i<this._size; i++){
             let filePath: string = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
             if(fs.existsSync(filePath)){
-                Global.sleep(1000);
+                Global.sleep(2000);
                 let lines: string[] = fs.readFileSync(filePath, "utf8").split("\n");
-                let temp:Chromosome = new Chromosome(width, height, minLength, maxBoxes);
-                temp.stringInitialize(lines);
-                fs.unlinkSync(filePath);
-                result.push(temp);
+                // Safety precaution
+                if (lines.length >= height) {
+                    let temp:Chromosome = new Chromosome(width, height, minLength, maxBoxes);
+                    temp.stringInitialize(lines);
+                    fs.unlinkSync(filePath);
+                    result.push(temp);
+                }
             }
         }
         return result;

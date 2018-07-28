@@ -1289,12 +1289,15 @@ var RunningEvaluator = (function () {
         for (var i = 0; i < this._size; i++) {
             var filePath = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
             if (fs.existsSync(filePath)) {
-                Global.sleep(1000);
+                Global.sleep(2000);
                 var lines = fs.readFileSync(filePath, "utf8").split("\n");
-                var temp = new Chromosome(width, height, minLength, maxBoxes);
-                temp.stringInitialize(lines);
-                fs.unlinkSync(filePath);
-                result.push(temp);
+                // Safety precaution
+                if (lines.length >= height) {
+                    var temp = new Chromosome(width, height, minLength, maxBoxes);
+                    temp.stringInitialize(lines);
+                    fs.unlinkSync(filePath);
+                    result.push(temp);
+                }
             }
         }
         return result;
