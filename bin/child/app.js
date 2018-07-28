@@ -29,5 +29,6 @@ while(true){
     }
     catch(e){
         console.log("Error happened, Trying to overcome it in the next loop.");
+        console.log("   " + e);
     }
 }
