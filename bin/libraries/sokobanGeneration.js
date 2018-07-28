@@ -1285,18 +1285,23 @@ var RunningEvaluator = (function () {
     }
     RunningEvaluator.prototype.checkFiles = function (fs, path, width, height, minLength, maxBoxes) {
         var result = [];
-        var startIndex = this._id * this._size;
         for (var i = 0; i < this._size; i++) {
-            var filePath = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
-            if (fs.existsSync(filePath)) {
-                Global.sleep(2000);
-                var lines = fs.readFileSync(filePath, "utf8").split("\n");
-                // Safety precaution
-                if (lines.length >= height) {
-                    var temp = new Chromosome(width, height, minLength, maxBoxes);
-                    temp.stringInitialize(lines);
-                    fs.unlinkSync(filePath);
-                    result.push(temp);
+            result.push(null);
+        }
+        var startIndex = this._id * this._size;
+        while (result.length < this._size) {
+            for (var i = 0; i < this._size; i++) {
+                var filePath = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
+                if (fs.existsSync(filePath)) {
+                    Global.sleep(2000);
+                    var lines = fs.readFileSync(filePath, "utf8").split("\n");
+                    // Safety precaution
+                    if (lines.length >= height) {
+                        var temp = new Chromosome(width, height, minLength, maxBoxes);
+                        temp.stringInitialize(lines);
+                        fs.unlinkSync(filePath);
+                        result[i] = temp;
+                    }
                 }
             }
         }

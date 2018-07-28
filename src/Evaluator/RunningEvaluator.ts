@@ -11,18 +11,24 @@ class RunningEvaluator{
 
     checkFiles(fs:any, path:string, width:number, height:number, minLength:number, maxBoxes:number):Chromosome[]{
         let result:Chromosome[] = [];
-        let startIndex:number = this._id * this._size;
         for(let i=0; i<this._size; i++){
-            let filePath: string = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
-            if(fs.existsSync(filePath)){
-                Global.sleep(2000);
-                let lines: string[] = fs.readFileSync(filePath, "utf8").split("\n");
-                // Safety precaution
-                if (lines.length >= height) {
-                    let temp:Chromosome = new Chromosome(width, height, minLength, maxBoxes);
-                    temp.stringInitialize(lines);
-                    fs.unlinkSync(filePath);
-                    result.push(temp);
+            result.push(null);
+        }
+
+        let startIndex:number = this._id * this._size;
+        while(result.length < this._size){
+            for(let i=0; i<this._size; i++){
+                let filePath: string = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
+                if(fs.existsSync(filePath)){
+                    Global.sleep(2000);
+                    let lines: string[] = fs.readFileSync(filePath, "utf8").split("\n");
+                    // Safety precaution
+                    if (lines.length >= height) {
+                        let temp:Chromosome = new Chromosome(width, height, minLength, maxBoxes);
+                        temp.stringInitialize(lines);
+                        fs.unlinkSync(filePath);
+                        result[i] = temp;
+                    }
                 }
             }
         }
