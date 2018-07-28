@@ -107,9 +107,10 @@ function loadMapElites(genNumber){
 //     }
 }
 
+let chromosomes = []
 if(genNumber == 0){
     console.log("Initializing map");
-    let chromosomes = mapElite.initializeMap(parameters.width, parameters.height, parameters.minLength, 
+    chromosomes = mapElite.initializeMap(parameters.width, parameters.height, parameters.minLength, 
         parameters.wallPercentage, parameters.boxPercentage, parameters.maxBoxes, batchSize);
     fs.writeFileSync(parameters.resultPath + "statistics.txt", "");
 }
