@@ -193,25 +193,25 @@ class Chromosome{
             }
         }
         emptyTiles = this.getLocations(this.EMPTY).concat(this.getLocations(this.WALL));
-        let boxTiles = this.getLocations(this.BOX);
-        let targetTiles = this.getLocations(this.TARGET);
+        let boxTiles = this.getLocations(this.BOX).concat(this.getLocations(this.BOX_TARGET));
+        let targetTiles = this.getLocations(this.TARGET).concat(this.getLocations(this.BOX_TARGET));
         if (boxTiles.length == 0) {
             let tile = emptyTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
             if(tile == null){
-                tile = targetTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
+                tile = targetTiles.splice(Math.randInt(targetTiles.length), 1)[0];
             }
             this._genes[tile.y][tile.x] = this.BOX;
         }
         if (targetTiles.length == 0) {
             let tile = emptyTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
             if(tile == null){
-                tile = targetTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
+                tile = boxTiles.splice(Math.randInt(boxTiles.length), 1)[0];
                 
             }
             this._genes[tile.y][tile.x] = this.TARGET;
         }
-        boxTiles = this.getLocations(this.BOX);
-        targetTiles = this.getLocations(this.TARGET);
+        boxTiles = this.getLocations(this.BOX).concat(this.getLocations(this.BOX_TARGET));
+        targetTiles = this.getLocations(this.TARGET).concat(this.getLocations(this.BOX_TARGET));
         let boxNumber = boxTiles.length;
         let targetNumber = targetTiles.length;
         if(Math.abs(boxNumber - targetNumber) > 0){
