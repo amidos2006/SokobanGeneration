@@ -181,6 +181,9 @@ class Chromosome{
         let playerTiles = this.getLocations(this.PLAYER);
         if(playerTiles.length == 0){
             let tile = emptyTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
+            if(tile != null){
+                tile = { x: Math.randInt(this._genes[0].length), y: Math.randInt(this._genes.length)};
+            }
             this._genes[tile.y][tile.x] = this.PLAYER;
         }
         if(playerTiles.length > 1){
@@ -194,10 +197,17 @@ class Chromosome{
         let targetTiles = this.getLocations(this.TARGET);
         if (boxTiles.length == 0) {
             let tile = emptyTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
+            if(tile == null){
+                tile = targetTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
+            }
             this._genes[tile.y][tile.x] = this.BOX;
         }
         if (targetTiles.length == 0) {
             let tile = emptyTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
+            if(tile == null){
+                tile = targetTiles.splice(Math.randInt(emptyTiles.length), 1)[0];
+                
+            }
             this._genes[tile.y][tile.x] = this.TARGET;
         }
         boxTiles = this.getLocations(this.BOX);
