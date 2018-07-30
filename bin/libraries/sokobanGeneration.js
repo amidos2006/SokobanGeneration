@@ -724,6 +724,9 @@ var Chromosome = (function () {
             this._solution = [];
             for (var _i = 0, values_1 = values; _i < values_1.length; _i++) {
                 var v = values_1[_i];
+                if (v.trim().length == 0) {
+                    continue;
+                }
                 this._solution.push(parseInt(v));
             }
         },
@@ -1023,6 +1026,10 @@ var Chromosome = (function () {
         this._constraint = solutionFitness * Math.min(1, this._solution.length / this._minLength);
     };
     Chromosome.prototype.calculateFitness = function (pop) {
+        if (this._solution.length == 0) {
+            this._fitness = 0;
+            return;
+        }
         if (pop.length < 1) {
             this._fitness = 1;
             return;

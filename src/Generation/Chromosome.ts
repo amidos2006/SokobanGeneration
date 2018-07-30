@@ -135,6 +135,9 @@ class Chromosome{
         let values:string[] = value.split(",");
         this._solution = [];
         for(let v of values){
+            if(v.trim().length == 0){
+                continue;
+            }
             this._solution.push(parseInt(v));
         }
     }
@@ -451,6 +454,10 @@ class Chromosome{
     }
 
     calculateFitness(pop:Chromosome[]):void{
+        if(this._solution.length == 0){
+            this._fitness = 0;
+            return;
+        }
         if(pop.length < 1){
             this._fitness = 1;
             return;
