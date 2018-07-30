@@ -127,10 +127,10 @@ while(true){
     console.log("   Writing new Batch");
     console.log("   Waiting to be evaluated");
     while(!evaluator.checkIsDone(fs, parameters.outPath)){
-        SokobanGeneration.Global.sleep(1000);
+        SokobanGeneration.Global.sleep(500);
     }
     // for safety to make sure that all children finished writing
-    SokobanGeneration.Global.sleep(2000);
+    SokobanGeneration.Global.sleep(1000);
     console.log("   Set the chromosomes' solution");
     evaluator.setChromosomes(fs, parameters.outPath, chromosomes);
     console.log("   Updating map");

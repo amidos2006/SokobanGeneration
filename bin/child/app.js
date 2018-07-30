@@ -15,7 +15,7 @@ let agent = new SokobanGeneration[parameters.agent](agentArgs);
 
 console.log("Waiting for chromosomes");
 while(true){
-    SokobanGeneration.Global.sleep(1000);
+    SokobanGeneration.Global.sleep(500);
     let chromosomes = evaluator.checkFiles(fs, parameters.inPath, parameters.width,
         parameters.height, parameters.minLength, parameters.maxBoxes);
     console.log("Found " + chromosomes.length + " chromosomes for evaluation");

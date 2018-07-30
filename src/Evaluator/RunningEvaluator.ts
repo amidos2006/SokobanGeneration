@@ -21,7 +21,7 @@ class RunningEvaluator{
             for(let i=0; i<this._size; i++){
                 let filePath: string = path + "Chromosome_" + (startIndex + i).toString() + ".txt";
                 if(fs.existsSync(filePath)){
-                    Global.sleep(2000);
+                    Global.sleep(1000);
                     let lines: string[] = fs.readFileSync(filePath, "utf8").split("\n");
                     // Safety precaution
                     if (lines.length >= height) {
