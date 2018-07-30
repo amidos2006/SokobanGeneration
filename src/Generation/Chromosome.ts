@@ -210,8 +210,8 @@ class Chromosome{
             }
             this._genes[tile.y][tile.x] = this.TARGET;
         }
-        boxTiles = this.getLocations(this.BOX).concat(this.getLocations(this.BOX_TARGET));
-        targetTiles = this.getLocations(this.TARGET).concat(this.getLocations(this.BOX_TARGET));
+        boxTiles = this.getLocations(this.BOX);
+        targetTiles = this.getLocations(this.TARGET);
         let boxNumber = boxTiles.length;
         let targetNumber = targetTiles.length;
         if(Math.abs(boxNumber - targetNumber) > 0){
@@ -398,7 +398,7 @@ class Chromosome{
             let dir: any = Global.getDirection(i);
             state.update(dir.x, dir.y, false);
         }
-        return result / (4 * this._solution.length);
+        return result / Math.max(1, (4 * this._solution.length));
     }
 
     private numberOfBoxes():number{

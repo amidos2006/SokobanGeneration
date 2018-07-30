@@ -38,7 +38,7 @@ class Cell{
         return feasible;
     }
 
-    getInfeasibleChromosome():Chromosome[]{
+    getInfeasibleChromosomes():Chromosome[]{
         let infeasible: Chromosome[] = [];
         for (let c of this._population) {
             if (c.constraint < 1) {
@@ -71,7 +71,7 @@ class Cell{
     getChromosome(type:number=0):Chromosome{
         let feasible:Chromosome[] = this.getFeasibleChromosomes();
         feasible.sort((a,b)=>{ return a.fitness - b.fitness; });
-        let infeasible:Chromosome[] = this.getInfeasibleChromosome();
+        let infeasible:Chromosome[] = this.getInfeasibleChromosomes();
         infeasible.sort((a,b)=>{return a.constraint - b.constraint; });
         switch(type){
             case 0:

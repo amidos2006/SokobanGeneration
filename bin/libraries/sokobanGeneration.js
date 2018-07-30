@@ -786,8 +786,8 @@ var Chromosome = (function () {
             }
             this._genes[tile.y][tile.x] = this.TARGET;
         }
-        boxTiles = this.getLocations(this.BOX).concat(this.getLocations(this.BOX_TARGET));
-        targetTiles = this.getLocations(this.TARGET).concat(this.getLocations(this.BOX_TARGET));
+        boxTiles = this.getLocations(this.BOX);
+        targetTiles = this.getLocations(this.TARGET);
         var boxNumber = boxTiles.length;
         var targetNumber = targetTiles.length;
         if (Math.abs(boxNumber - targetNumber) > 0) {
@@ -975,7 +975,7 @@ var Chromosome = (function () {
             var dir = Global.getDirection(i);
             state.update(dir.x, dir.y, false);
         }
-        return result / (4 * this._solution.length);
+        return result / Math.max(1, (4 * this._solution.length));
     };
     Chromosome.prototype.numberOfBoxes = function () {
         var result = 0;
@@ -1123,7 +1123,7 @@ var Cell = (function () {
         }
         return feasible;
     };
-    Cell.prototype.getInfeasibleChromosome = function () {
+    Cell.prototype.getInfeasibleChromosomes = function () {
         var infeasible = [];
         for (var _i = 0, _a = this._population; _i < _a.length; _i++) {
             var c = _a[_i];
@@ -1156,7 +1156,7 @@ var Cell = (function () {
         if (type === void 0) { type = 0; }
         var feasible = this.getFeasibleChromosomes();
         feasible.sort(function (a, b) { return a.fitness - b.fitness; });
-        var infeasible = this.getInfeasibleChromosome();
+        var infeasible = this.getInfeasibleChromosomes();
         infeasible.sort(function (a, b) { return a.constraint - b.constraint; });
         switch (type) {
             case 0:
