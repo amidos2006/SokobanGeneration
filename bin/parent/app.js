@@ -42,7 +42,7 @@ function appendStatistics(genNumber){
     let maxInfeasible = 0;
     for(let c of cells){
         let feasible = c.getFeasibleChromosomes();
-        let infeasible = c.getInfeasibleChromosome();
+        let infeasible = c.getInfeasibleChromosomes();
         if(maxFeasible < feasible.length){
             maxFeasible = feasible.length;
         }
@@ -66,7 +66,7 @@ function writeGeneration(genNumber){
     let result = "";
     for(let c of cells){
         let feasible = c.getFeasibleChromosomes();
-        let infeasible = c.getInfeasibleChromosome();
+        let infeasible = c.getInfeasibleChromosomes();
         if (feasible.length > 0){
             let cellPath = folderPath + c.dimensions + "/";
             fs.mkdirSync(cellPath);
